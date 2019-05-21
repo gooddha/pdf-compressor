@@ -1,29 +1,11 @@
 const fs = require('fs');
+// const os = require('os');
+const chokidar = require('chokidar');
 const cmd = require('node-cmd');
-const os = require('os');
-const folderPath = 'test';
-fs.readdirSync(folderPath);
 
-console.log(os.freemem());
-
-// const dir = 'test'
-
-// try {
-//     if (!fs.existsSync(dir)){
-//       fs.mkdirSync(dir)
-//     }
-// } catch (err) {
-//     console.error(err)
-// }
-
-
-// fs.watch('test', )
-
-// let text = fs.readdirSync('test');
-
-// console.log(text);
-// cmd.get(
-//     'dir',
-//     function(err, data ) {
-//     }
-// )
+chokidar.watch('.', { ignored: /(^|[\/\\])\../ }).on('all', (event, path) => {
+    if (path.includes('pdf')) {
+        console.log('Added PDF File: ' + path);
+        cmd.run('gswin64c -dBATCH -dNOPAUSE -dSAFER -sDEVICE=jpeg -dJPEGQ=75 -r300 -sOutputFile=jpg/%03d.jpg ' + path);
+    }
+});
