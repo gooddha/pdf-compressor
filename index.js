@@ -17,6 +17,7 @@ chokidar.watch('.', { ignored: /(^|[\/\\])\../ }).on('add', (path) => {
                 if (error) console.log(error);
                 console.log(data);
                 console.log('Converting done');
+                // nconvert -out jpeg -o process\#.jpg -resize 50% 50%  -dpi 150 *.jpg
             });
         }
         
