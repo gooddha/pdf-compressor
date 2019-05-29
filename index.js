@@ -2,37 +2,57 @@ const fs = require('fs');
 const chokidar = require('chokidar');
 const cmd = require('node-cmd');
 const gs = 'assets\\gs\\bin\\gswin32c';
+const dirs = ['compressed', 'compressed\\jpg'];
 
-//watch for new files in root directory
-chokidar.watch('.', { ignored: /(^|[\/\\])\../, depth: 0 }).on('add', (path) => {
 
-    if (!fs.existsSync('compressed')) {
-        fs.mkdirSync('compressed');
-    }
+//watch for new files in the root directory
+chokidar.watch('.', { ignored: /(^|[\/\\])\../, depth: 0 }).on('add', (newFile) => {
 
-    if (!fs.existsSync('compressed\\jpg')) {
-        fs.mkdirSync('compressed\\jpg');
-    }
+    initializeDirs(dirs);
 
     //if added a pdf file 
-    if (path.toLowerCase().includes('pdf')) {
-        const jpgDir = 'compressed\\jpg\\' + path.split('.').slice(0, -1).join('.');        
+    if (newFile.toLowerCase().includes('pdf')) {
+        const pdf = newFile;
+        const jpgDir = 'compressed\\jpg\\' + pdf.split('.').slice(0, -1).join('.');        
         
         if (!fs.existsSync(jpgDir)) {
             fs.mkdirSync(jpgDir);
-            console.log(`Getting ${path}`)
+            console.log(`${printTime()}Getting ${pdf}`)
             
             //get jpegs from pdf
-            cmd.get(`${gs} -dBATCH -dNOPAUSE -dSAFER -sDEVICE=jpeg -dJPEGQ=75 -r300 -sOutputFile="${jpgDir}\\%03d.jpg" "${path}"`, (error, data) => {
+            const gsOptions = '-dBATCH -dNOPAUSE -dSAFER -sDEVICE=jpeg -dJPEGQ=75 -r300';
+            cmd.get(`${gs} ${gsOptions} -sOutputFile="${jpgDir}\\%03d.jpg" "${pdf}"`, (error, data) => {                
                 if (error) console.log(error);
+                console.log(`${printTime()}${pdf} pages is splitted by jpegs`);
                 
                 //get compressed pdf from jpegs
-                cmd.get(`magick "${jpgDir}\\*.jpg" -resize 50%  -density 150 -strip -compress JPEG -quality 30 "compressed\\${path}"`, (error, data) => {
+                const magickOptions = '-resize 50%  -density 150 -strip -compress JPEG -quality 30 ';
+                console.log(`${printTime()}Start ${pdf} compression`)
+                cmd.get(`magick "${jpgDir}\\*.jpg" ${magickOptions} "compressed\\${pdf}"`, (error, data) => {
+
                     if (error) console.log(error);
-                    console.log(`${path} is compressed`);
+                    console.log(`${printTime()}${pdf} is compressed`);
 
                 });            
             });         
         }
     }            
 });
+
+function initializeDirs(dirs) {
+    dirs.forEach(dir => {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+    });
+
+}
+
+function printTime() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    return `${hours}:${minutes}:${seconds} > `;
+}
