@@ -17,21 +17,20 @@ chokidar.watch('.', { ignored: /(^|[\/\\])\../, depth: 0 }).on('add', (newFile) 
         
         if (!fs.existsSync(jpgDir)) {
             fs.mkdirSync(jpgDir);
-            console.log(`${printTime()}Getting ${pdf}`)
+            print(`Getting ${pdf}`)
             
             //get jpegs from pdf
             const gsOptions = '-dBATCH -dNOPAUSE -dSAFER -sDEVICE=jpeg -dJPEGQ=75 -r300';
             cmd.get(`${gs} ${gsOptions} -sOutputFile="${jpgDir}\\%03d.jpg" "${pdf}"`, (error, data) => {                
                 if (error) console.log(error);
-                console.log(`${printTime()}${pdf} pages is splitted by jpegs`);
+                print(`${pdf} pages is splitted by jpegs, start ${pdf} compression`);
                 
                 //get compressed pdf from jpegs
                 const magickOptions = '-resize 50%  -density 150 -strip -compress JPEG -quality 30 ';
-                console.log(`${printTime()}Start ${pdf} compression`)
                 cmd.get(`magick "${jpgDir}\\*.jpg" ${magickOptions} "compressed\\${pdf}"`, (error, data) => {
 
                     if (error) console.log(error);
-                    console.log(`${printTime()}${pdf} is compressed`);
+                    print(`${pdf} is compressed`);
 
                 });            
             });         
@@ -55,4 +54,8 @@ function printTime() {
     const seconds = now.getSeconds();
 
     return `${hours}:${minutes}:${seconds} > `;
+}
+
+function print(message) {
+    return console.log(`${printTime()}${message}`)
 }
