@@ -10,7 +10,7 @@ chokidar.watch('.', { ignored: /(^|[\/\\])\../, depth: 0 }).on('add', (newFile) 
 
     initializeDirs(dirs);
 
-    //if added a pdf file 
+    //if a pdf file was added  
     if (newFile.toLowerCase().includes('pdf')) {
         const pdf = newFile;
         const jpgDir = 'compressed\\jpg\\' + pdf.split('.').slice(0, -1).join('.');        
@@ -56,7 +56,7 @@ function printTime() {
     return `${hours}:${minutes}:${seconds} > `;
 
     function addLeadingZero(number) {
-        number < 10 ? `0${number}` : number;
+        return number < 10 ? `0${number}` : number;
     }
 }
 
