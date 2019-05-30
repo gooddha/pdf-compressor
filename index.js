@@ -49,11 +49,19 @@ function initializeDirs(dirs) {
 
 function printTime() {
     const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
+    const hours = addLeadingZero(now.getHours());
+    const minutes = addLeadingZero(now.getMinutes());
+    const seconds = addLeadingZero(now.getSeconds());
 
     return `${hours}:${minutes}:${seconds} > `;
+
+    function addLeadingZero(number) {
+        if (number < 10) {
+            return `0${number}`
+        } else {
+            return number;
+        }
+    }
 }
 
 function print(message) {
