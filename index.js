@@ -56,11 +56,7 @@ function printTime() {
     return `${hours}:${minutes}:${seconds} > `;
 
     function addLeadingZero(number) {
-        if (number < 10) {
-            return `0${number}`
-        } else {
-            return number;
-        }
+        number < 10 ? `0${number}` : number;
     }
 }
 
