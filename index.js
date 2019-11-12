@@ -5,6 +5,7 @@ const gs = 'assets\\gs\\bin\\gswin32c';
 const dirs = ['compressed', 'compressed\\jpg'];
 
 
+
 //watch for new files in the root directory
 chokidar.watch('.', { ignored: /(^|[\/\\])\../, depth: 0 }).on('add', (newFile) => {
 
@@ -56,7 +57,7 @@ function printTime() {
     return `${hours}:${minutes}:${seconds} > `;
 
     function addLeadingZero(number) {
-        number < 10 ? `0${number}` : number;
+        return number < 10 ? `0${number}` : number;
     }
 }
 
