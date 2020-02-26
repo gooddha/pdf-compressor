@@ -33,7 +33,10 @@ function compress(newFile) {
         
         return new Promise((resolve, reject) => {
             cmd.get(gsCMD, (error, data) => {
-                if (error) reject(error);
+                if (error) {
+                    console.error(error);
+                    reject(error);
+                }
                 print(`${pdf} pages is splitted by jpegs, start ${pdf} compression`);
                 resolve();
             })
@@ -46,7 +49,11 @@ function compress(newFile) {
         const magikCMD = `magick "${jpgDir}\\*.jpg" ${magickOptions} "compressed\\${pdf}"`;
         
         cmd.get(magikCMD, (error) => {
-            if (error) reject(error);
+            if (error) {
+                console.error(error);
+                reject(error);
+            }
+                
             print(`${pdf} is compressed`);
         });            
     }
@@ -56,18 +63,18 @@ function compress(newFile) {
 
 function print(message) {
     return console.log(`${printTime()}${message}`)
-}
+    
+    
+    function printTime() {
+        const now = new Date();
+        const hours = addLeadingZero(now.getHours());
+        const minutes = addLeadingZero(now.getMinutes());
+        const seconds = addLeadingZero(now.getSeconds());
 
+        return `${hours}:${minutes}:${seconds} > `;
 
-function printTime() {
-    const now = new Date();
-    const hours = addLeadingZero(now.getHours());
-    const minutes = addLeadingZero(now.getMinutes());
-    const seconds = addLeadingZero(now.getSeconds());
-
-    return `${hours}:${minutes}:${seconds} > `;
-
-    function addLeadingZero(number) {
-        return number < 10 ? `0${number}` : number;
+        function addLeadingZero(number) {
+            return number < 10 ? `0${number}` : number;
+        }
     }
 }
